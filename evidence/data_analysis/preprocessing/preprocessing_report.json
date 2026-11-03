@@ -1,0 +1,18 @@
+{
+    "initial_records": 6497,
+    "removed_duplicates": 1177,
+    "final_records": 5320,
+    "missing_values": 0,
+    "features": 13,
+    "training_records": 4256,
+    "test_records": 1064,
+    "test_size": 0.2,
+    "random_state": 42,
+    "scaling": "StandardScaler",
+    "target": "quality_category",
+    "categories": {
+        "low": "quality <= 4",
+        "medium": "quality 5-6",
+        "high": "quality >= 7"
+    }
+}
