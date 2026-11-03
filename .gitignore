@@ -1,0 +1,29 @@
+@"
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+
+# Variables de entorno
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Archivos temporales
+*.log
+.DS_Store
+Thumbs.db
+
+# Archivos de Visual Studio Code
+.vscode/
+"@ | Set-Content -Encoding UTF8 .gitignore
