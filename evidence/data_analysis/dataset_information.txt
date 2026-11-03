@@ -1,0 +1,7 @@
+WINE QUALITY DATASET
+====================
+
+Registros: 6497
+Columnas: 13
+Duplicados: 1177
+Valores faltantes: 0
