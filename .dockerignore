@@ -1,0 +1,34 @@
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Git
+.git/
+
+# Visual Studio Code
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+*.pyd
+
+# MLflow
+mlflow.db
+mlruns/
+mlartifacts/
+
+# Datos y evidencias
+data/
+evidence/
+notebooks/
+tests/
+
+# Archivos temporales
+*.log
+.DS_Store
+Thumbs.db
+
+# Variables de entorno
+.env

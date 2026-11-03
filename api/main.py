@@ -46,9 +46,10 @@ def health():
     return {
         "status": "healthy",
         "model_loaded": True,
+        "model_name": get_model_info()["model_name"],
+        "model_version": get_model_info()["model_version"],
         "pod_name": get_pod_name()
     }
-
 
 # ==========================================
 # INFORMACIÓN DEL MODELO

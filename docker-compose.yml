@@ -1,0 +1,64 @@
+services:
+
+  # =====================================
+  # SERVIDOR MLFLOW
+  # =====================================
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: docker/mlflow.Dockerfile
+
+    container_name: wine-mlflow
+
+    ports:
+      - "5000:5000"
+
+    volumes:
+      - ./mlflow.db:/mlflow/mlflow.db
+      - ./mlruns:/mlflow/mlruns
+
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri sqlite:////mlflow/mlflow.db
+      --default-artifact-root file:///mlflow/mlruns
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # =====================================
+  # API FASTAPI
+  # =====================================
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+
+    container_name: wine-api
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+
+    volumes:
+      - ./mlruns:/mlflow/mlruns
+
+    depends_on:
+      mlflow:
+        condition: service_healthy
+
+    restart: unless-stopped

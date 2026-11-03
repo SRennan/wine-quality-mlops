@@ -19,6 +19,8 @@ env/
 mlruns/
 mlartifacts/
 mlflow.db
+mlflow_backup.db
+mlruns_backup/
 
 # Archivos temporales
 *.log
@@ -27,6 +29,7 @@ Thumbs.db
 
 # Archivos de Visual Studio Code
 .vscode/
+
+# Evidencias y archivos temporales
+evidence/
 "@ | Set-Content -Encoding UTF8 .gitignore
-
-

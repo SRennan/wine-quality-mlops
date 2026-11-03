@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 # Directorio principal
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -13,9 +14,12 @@ DATA_PATH = (
 
 
 # Base de datos SQLite para MLflow
-MLFLOW_DB = BASE_DIR / "mlflow.db"
+MLFLOW_TRACKING_URI = os.getenv(
+    "MLFLOW_TRACKING_URI",
+    f"sqlite:///{(BASE_DIR / 'mlflow.db').as_posix()}"
+)
 
-TRACKING_URI = f"sqlite:///{MLFLOW_DB.as_posix()}"
+TRACKING_URI = MLFLOW_TRACKING_URI
 
 # Nombre del experimento
 EXPERIMENT_NAME = "Wine Quality Classification"

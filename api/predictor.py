@@ -7,7 +7,10 @@ import socket
 
 from mlflow.tracking import MlflowClient
 
-from src.training.model_config import TRACKING_URI
+MLFLOW_TRACKING_URI = os.getenv(
+    "MLFLOW_TRACKING_URI",
+    "sqlite:///mlflow.db"
+)
 
 
 # ==========================================
@@ -19,7 +22,7 @@ MODEL_ALIAS = "production"
 
 MODEL_URI = f"models:/{MODEL_NAME}@{MODEL_ALIAS}"
 
-mlflow.set_tracking_uri(TRACKING_URI)
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
 client = MlflowClient()
 
