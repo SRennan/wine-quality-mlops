@@ -33,3 +33,7 @@ Thumbs.db
 # Evidencias y archivos temporales
 evidence/
 "@ | Set-Content -Encoding UTF8 .gitignore
+
+# Imágenes Docker exportadas
+*.tar
+*.tar.gz

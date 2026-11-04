@@ -1,24 +1,22 @@
-import mlflow
-import mlflow.sklearn
 
+import mlflow
 import pandas as pd
 import os
 import socket
 
 from mlflow.tracking import MlflowClient
 
-MLFLOW_TRACKING_URI = os.getenv(
-    "MLFLOW_TRACKING_URI",
-    "sqlite:///mlflow.db"
-)
-
-
 # ==========================================
 # CONFIGURACIÓN
 # ==========================================
 
+MLFLOW_TRACKING_URI = os.getenv(
+    "MLFLOW_TRACKING_URI",
+    "http://localhost:5000"
+)
+
 MODEL_NAME = "WineQualityClassifier"
-MODEL_ALIAS = "production"
+MODEL_ALIAS = "champion"
 
 MODEL_URI = f"models:/{MODEL_NAME}@{MODEL_ALIAS}"
 
@@ -26,14 +24,13 @@ mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
 client = MlflowClient()
 
-
 # ==========================================
 # CARGAR MODELO
 # ==========================================
 
 print("\nConectando con MLflow Registry...")
 
-model = mlflow.sklearn.load_model(MODEL_URI)
+model = mlflow.pyfunc.load_model(MODEL_URI)
 
 model_version = client.get_model_version_by_alias(
     name=MODEL_NAME,
@@ -42,26 +39,33 @@ model_version = client.get_model_version_by_alias(
 
 MODEL_VERSION = str(model_version.version)
 
-# Recuperar las variables originales del entrenamiento
-EXPECTED_FEATURES = list(
-    model.feature_names_in_
-)
+EXPECTED_FEATURES = [
+    "fixed acidity",
+    "volatile acidity",
+    "citric acid",
+    "residual sugar",
+    "chlorides",
+    "free sulfur dioxide",
+    "total sulfur dioxide",
+    "density",
+    "pH",
+    "sulphates",
+    "alcohol",
+    "wine_type_red",
+    "wine_type_white"
+]
 
 print("Modelo cargado correctamente.")
 print("Modelo:", MODEL_NAME)
 print("Versión:", MODEL_VERSION)
-
+print("Alias:", MODEL_ALIAS)
 
 # ==========================================
 # IDENTIFICAR POD
 # ==========================================
 
 def get_pod_name():
-
-    return os.getenv(
-        "HOSTNAME",
-        socket.gethostname()
-    )
+    return os.getenv("HOSTNAME", socket.gethostname())
 
 
 # ==========================================
@@ -70,18 +74,12 @@ def get_pod_name():
 
 def prepare_input(data):
 
-    # Convertir entrada en diccionario
     data = data.model_dump(by_alias=True)
 
     wine_type = data.pop("wine_type")
 
-    # Crear variables One-Hot Encoding
     data["wine_type_red"] = 1 if wine_type == "red" else 0
-
     data["wine_type_white"] = 1 if wine_type == "white" else 0
-
-    # Construir DataFrame con el orden exacto
-    # de las variables utilizadas durante el entrenamiento
 
     input_df = pd.DataFrame(
         [[data[feature] for feature in EXPECTED_FEATURES]],

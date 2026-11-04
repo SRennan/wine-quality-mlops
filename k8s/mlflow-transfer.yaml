@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mlflow-data-transfer
+  namespace: wine-quality
+spec:
+  restartPolicy: Never
+  containers:
+    - name: transfer
+      image: busybox:1.36
+      command:
+        - sh
+        - -c
+        - "sleep 3600"
+      volumeMounts:
+        - name: db-storage
+          mountPath: /transfer/db
+        - name: artifacts-storage
+          mountPath: /transfer/artifacts
+  volumes:
+    - name: db-storage
+      persistentVolumeClaim:
+        claimName: mlflow-db-storage
+    - name: artifacts-storage
+      persistentVolumeClaim:
+        claimName: mlflow-artifacts-storage
+        

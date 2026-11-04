@@ -338,7 +338,14 @@ def main():
 
     results = []
 
-    for config in EXPERIMENTS[5:]:
+    # Segundo grupo: modelos con balanceo
+    group_2 = EXPERIMENTS[5:10]
+
+    print("\n====================================")
+    print("GRUPO 2: MODELOS CON BALANCEO")
+    print("====================================")
+
+    for config in group_2:
 
         metrics = run_experiment(
             config,
@@ -350,38 +357,30 @@ def main():
 
         results.append({
             "experiment": config["name"],
+            "class_weight": "balanced",
             **metrics
         })
 
-    # Crear tabla comparativa
-
     results_df = pd.DataFrame(results)
-
-    results_df = results_df.sort_values(
-        by="f1_macro",
-        ascending=False
-    )
 
     output_path = (
         BASE_DIR /
         "evidence" /
         "mlflow" /
-        "experiment_comparison.csv"
+        "experiment_comparison_group_2.csv"
     )
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
 
     results_df.to_csv(output_path, index=False)
 
     print("\n====================================")
-    print("COMPARACIÓN DE EXPERIMENTOS")
+    print("RESULTADOS GRUPO 2")
     print("====================================")
 
     print(results_df.to_string(index=False))
 
-    print("\nMEJOR EXPERIMENTO:")
-
-    print(results_df.iloc[0].to_string())
-
-    print("\nTodos los experimentos finalizaron.")
+    print("\nGrupo 2 finalizado.")
 
 
 if __name__ == "__main__":

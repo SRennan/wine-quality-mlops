@@ -1,25 +1,25 @@
 FROM python:3.12-slim
 
-# Directorio de trabajo
 WORKDIR /app
 
-# Instalar dependencias del sistema
+# Dependencias del sistema
 RUN apt-get update && apt-get install -y \
     libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiar dependencias
+# Dependencias Python
 COPY requirements.txt .
-
-# Instalar bibliotecas Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar proyecto
+# Código del proyecto
 COPY api/ ./api/
 COPY src/ ./src/
 
-# Puerto de FastAPI
 EXPOSE 8000
 
-# Ejecutar API
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Un proceso por contenedor.
+# Kubernetes gestionará las réplicas.
+CMD ["uvicorn", "api.main:app", \
+     "--host", "0.0.0.0", \
+     "--port", "8000", \
+     "--workers", "1"]

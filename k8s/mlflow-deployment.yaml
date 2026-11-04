@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow
+  namespace: wine-quality
+  labels:
+    app: mlflow
+
+spec:
+  replicas: 1
+
+  # Evita ejecutar dos instancias simultáneamente
+  strategy:
+    type: Recreate
+
+  selector:
+    matchLabels:
+      app: mlflow
+
+  template:
+    metadata:
+      labels:
+        app: mlflow
+
+    spec:
+      containers:
+        - name: mlflow
+          image: wine-quality-mlops-mlflow:v3
+          imagePullPolicy: Never
+
+          ports:
+            - name: http
+              containerPort: 5000
+
+          volumeMounts:
+            - name: db-storage
+              mountPath: /mlflow/db
+
+            - name: artifacts-storage
+              mountPath: /mlflow/mlruns
+
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            periodSeconds: 10
+            failureThreshold: 30
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            periodSeconds: 15
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            periodSeconds: 30
+            failureThreshold: 3
+
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: mlflow-db-storage
+
+        - name: artifacts-storage
+          persistentVolumeClaim:
+            claimName: mlflow-artifacts-storage
